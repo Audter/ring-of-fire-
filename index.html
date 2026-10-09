@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Ring of Fire">
-<meta name="description" content="แผ่นดินไหวทั่วโลกจาก USGS แบบ live พร้อมพายุและไฟป่าจาก NASA EONET">
+<meta name="description" content="แผ่นดินไหว พายุ ไฟป่า ธรณีวิทยา สภาพอากาศ คลื่นทะเล และภาพดาราศาสตร์ประจำวัน ในแอปเดียว">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314202b'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%23ff6a4c' stroke-width='5'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%23f0b43a'/%3E%3C/svg%3E">
 <title>Ring of Fire Watch</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,31 +70,66 @@ pre{font-family:var(--mono);font-size:12.5px;background:var(--surface);border:1p
 .quake{cursor:pointer}
 .quake.sel{stroke:var(--ink)!important;stroke-width:2!important}
 @media (prefers-reduced-motion:no-preference){.quake{transition:opacity .2s}}
-select,button{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+select,button,input[type=text]{font:inherit;font-size:14px;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 button{cursor:pointer;font-family:var(--mono);font-weight:500}
-button:hover,button:focus-visible,select:focus-visible{border-color:var(--ink);outline:none}
+button:hover,button:focus-visible,select:focus-visible,input[type=text]:focus-visible{border-color:var(--ink);outline:none}
 button:disabled{opacity:.5;cursor:wait}
 body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-.info a{color:var(--ink)}
+a{color:var(--ink)}
 .topbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
 .toggles{display:flex;flex-wrap:wrap;gap:8px}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:2px;background:var(--surface)}
 .seg button{border:0;border-radius:7px;padding:5px 10px;font-size:12.5px;font-family:var(--body);color:var(--muted);background:transparent;min-height:32px}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button[aria-pressed="true"],.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .seg button:focus-visible{outline:2px solid var(--deep);outline-offset:1px}
+:root{--ok:#2f8f46;--warn:#b98205;--bad:#d23f25;--vbad:#8e3a9c;--okbg:#e3f3e7;--warnbg:#fbf0d4;--badbg:#fbe3dd;--vbadbg:#f2e2f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ok:#6fd38a;--warn:#f0b43a;--bad:#ff8a70;--vbad:#d58ae3;--okbg:#16301f;--warnbg:#33290f;--badbg:#3a1a14;--vbadbg:#2e1934}}
+:root[data-theme="dark"]{--ok:#6fd38a;--warn:#f0b43a;--bad:#ff8a70;--vbad:#d58ae3;--okbg:#16301f;--warnbg:#33290f;--badbg:#3a1a14;--vbadbg:#2e1934}
+h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0;text-wrap:balance}
+.loc-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:10px}
+.loc-name{font-size:13px;color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-family:var(--body);font-size:13px;border-radius:999px;padding:5px 12px;min-height:32px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px;align-content:start;min-width:0;background:var(--bg)}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.src{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.card-b{display:grid;gap:8px;font-size:14px;min-width:0}
+.card-b p{margin:0}
+.big{font-family:var(--display);font-weight:600;font-size:34px;line-height:1}
+.big-s{font-family:var(--display);font-weight:600;font-size:20px;line-height:1.15}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:0;font-size:13.5px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.geo-unit{display:grid;grid-template-columns:14px minmax(0,1fr);gap:10px}
+.swatch{width:14px;border-radius:4px;border:1px solid var(--line);min-height:44px}
+.aqi-row{display:grid;gap:4px}
+.pill{justify-self:start;font-size:12.5px;font-weight:500;border-radius:999px;padding:3px 10px;background:var(--line);color:var(--ink)}
+.pill[data-band="0"]{background:var(--okbg);color:var(--ok)}
+.pill[data-band="1"]{background:var(--warnbg);color:var(--warn)}
+.pill[data-band="2"],.pill[data-band="3"]{background:var(--badbg);color:var(--bad)}
+.pill[data-band="4"],.pill[data-band="5"]{background:var(--vbadbg);color:var(--vbad)}
+#spark svg{display:block;width:100%;height:auto}
+.apod{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:700px){.apod{grid-template-columns:minmax(0,1fr)}}
+.apod-img img{display:block;width:100%;max-height:420px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--ocean)}
+.apod details summary,.keybox summary{cursor:pointer;font-size:14px}
+.keybox{border-top:1px solid var(--line);padding-top:10px;font-size:14px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header style="display:grid;gap:10px">
     <div class="topbar">
-      <div class="eyebrow">USGS + NASA EONET · <span id="stamp"></span></div>
+      <div class="eyebrow">USGS · NASA · Macrostrat · Open-Meteo · <span id="stamp"></span></div>
       <div class="toggles">
         <div class="seg" role="group" aria-label="Language">
           <button type="button" id="langTh" data-lang="th">ไทย</button>
           <button type="button" id="langEn" data-lang="en">EN</button>
         </div>
-        <div class="seg" role="group" id="themeGrp" aria-label="Theme">
+        <div class="seg" role="group" aria-label="Theme">
           <button type="button" id="thAuto" data-theme-btn="auto" data-i18n="auto"></button>
           <button type="button" id="thLight" data-theme-btn="light" data-i18n="light"></button>
           <button type="button" id="thDark" data-theme-btn="dark" data-i18n="dark"></button>
@@ -143,10 +178,39 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
       <span><i style="background:var(--deep)"></i><span data-i18n="lgD"></span></span>
       <span><i style="background:transparent;border:2px solid var(--storm)"></i><span data-i18n="storms"></span></span>
       <span><i style="background:var(--fire);border-radius:2px;transform:rotate(45deg)"></i><span data-i18n="fires"></span></span>
-      <span data-i18n="lgSize"></span>
+      <span><i style="background:transparent;border:2px solid var(--ink);border-radius:50%"></i><span data-i18n="lgPin"></span></span>
     </div>
     <div id="map" role="img"></div>
     <div class="info" id="info" aria-live="polite"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="locH" id="locPanel">
+    <div class="loc-head">
+      <div style="min-width:0">
+        <h2 id="locH" data-i18n="locH"></h2>
+        <div class="mono loc-name" id="locName"></div>
+      </div>
+      <div class="chips">
+        <button type="button" class="chip" data-preset="bkk" data-i18n="pBkk"></button>
+        <button type="button" class="chip" data-preset="got" data-i18n="pGot"></button>
+        <button type="button" class="chip" id="myLoc" data-i18n="pMe"></button>
+      </div>
+    </div>
+    <p class="note" style="margin:0" data-i18n="locHint"></p>
+    <div class="cards">
+      <article class="card" aria-labelledby="geoH">
+        <div class="card-h"><h3 id="geoH" data-i18n="geoH"></h3><span class="src">Macrostrat</span></div>
+        <div id="geoBody" class="card-b"></div>
+      </article>
+      <article class="card" aria-labelledby="wxH">
+        <div class="card-h"><h3 id="wxH" data-i18n="wxH"></h3><span class="src">Open-Meteo</span></div>
+        <div id="wxBody" class="card-b"></div>
+      </article>
+      <article class="card" aria-labelledby="seaH">
+        <div class="card-h"><h3 id="seaH" data-i18n="seaH"></h3><span class="src">Open-Meteo Marine</span></div>
+        <div id="seaBody" class="card-b"></div>
+      </article>
+    </div>
   </section>
 
   <section class="two">
@@ -164,13 +228,29 @@ body{margin:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-a
     </div>
   </section>
 
+  <section class="panel" aria-labelledby="apodH">
+    <div class="card-h"><h2 id="apodH" data-i18n="apodH"></h2><span class="src">NASA APOD</span></div>
+    <div id="apodBody" class="apod"></div>
+    <details class="keybox">
+      <summary data-i18n="keySum"></summary>
+      <p class="note" style="margin:8px 0" data-i18n="keyNote"></p>
+      <form id="keyForm" class="controls">
+        <input type="text" id="apiKey" autocomplete="off" spellcheck="false" placeholder="DEMO_KEY" style="flex:1;min-width:0">
+        <button type="submit" data-i18n="save"></button>
+      </form>
+      <a href="https://api.nasa.gov/" target="_blank" rel="noopener" data-i18n="getKey"></a>
+    </details>
+  </section>
+
   <section class="panel" aria-labelledby="dH">
     <h2 id="dH" data-i18n="srcH"></h2>
     <p class="note" style="margin:0" data-i18n="srcNote"></p>
     <div class="links">
       <a href="https://earthquake.usgs.gov/earthquakes/map/" target="_blank" rel="noopener">USGS live map</a>
-      <a href="https://earthquake.usgs.gov/earthquakes/feed/v1.0/geojson.php" target="_blank" rel="noopener">USGS feed docs</a>
-      <a href="https://eonet.gsfc.nasa.gov/docs/v3" target="_blank" rel="noopener">NASA EONET docs</a>
+      <a href="https://eonet.gsfc.nasa.gov/docs/v3" target="_blank" rel="noopener">NASA EONET</a>
+      <a href="https://apod.nasa.gov/" target="_blank" rel="noopener">NASA APOD</a>
+      <a href="https://macrostrat.org/" target="_blank" rel="noopener">Macrostrat (CC-BY 4.0)</a>
+      <a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a>
     </div>
   </section>
 </div>
@@ -189,33 +269,57 @@ const EONET="https://eonet.gsfc.nasa.gov/api/v3/events?status=open&category=seve
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{return localStorage.getItem(k)??d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 
+const WX={th:{0:"ท้องฟ้าแจ่มใส",1:"มีเมฆบางส่วน",2:"มีเมฆบางส่วน",3:"เมฆมาก",45:"หมอก",48:"หมอก",d:"ฝนปรอย",r:"ฝนตก",s:"หิมะ",sh:"ฝนตกเป็นช่วง",t:"พายุฝนฟ้าคะนอง"},
+          en:{0:"Clear sky",1:"Partly cloudy",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Fog",d:"Drizzle",r:"Rain",s:"Snow",sh:"Showers",t:"Thunderstorm"}};
 const T={
 th:{auto:"อัตโนมัติ",light:"สว่าง",dark:"มืด",
- lede:"แผ่นดินไหวทั่วโลกจาก USGS แบบ live พร้อมพายุและไฟป่าที่ยัง active จาก NASA EONET แผนที่จัดศูนย์กลางไว้ที่แปซิฟิก เพราะแผ่นดินไหวส่วนใหญ่เกิดตามแนว subduction zone รอบมหาสมุทรนี้",
+ lede:"แผ่นดินไหวทั่วโลกจาก USGS แบบ live พร้อมพายุและไฟป่าจาก NASA EONET แตะจุดใดก็ได้บนแผนที่เพื่อดูธรณีวิทยา สภาพอากาศ คลื่นทะเล และคุณภาพอากาศ ณ ตำแหน่งนั้น",
  data:"ข้อมูล",f1:"M4.5+ · 24 ชั่วโมง",f2:"M4.5+ · 7 วัน",f3:"M2.5+ · 7 วัน",f4:"M4.5+ · 30 วัน",f5:"Significant · 30 วัน",
  deepest:"hypocenter ลึกที่สุด",largest:"ขนาดใหญ่ที่สุด",largestAt:"ใหญ่สุด · ",none:"ไม่มีเหตุการณ์ในช่วงนี้",
  eonetLbl:"พายุและไฟป่าที่ยัง active",eonetFail:"โหลดข้อมูล EONET ไม่ได้",
  mapH:"แผนที่เหตุการณ์",minMag:"ขนาดขั้นต่ำ",quakes:"แผ่นดินไหว",storms:"พายุ",fires:"ไฟป่า",
- lgS:"ตื้น <70 km",lgM:"ปานกลาง 70–300 km",lgD:"ลึก >300 km",lgSize:"ขนาดวงกลมแปรตาม magnitude",
- tapHint:"แตะหรือชี้ที่จุดบนแผนที่เพื่อดูรายละเอียด",shown:(a,b)=>`แสดง ${a} จาก ${b} จุด`,
+ lgS:"ตื้น <70 km",lgM:"ปานกลาง 70–300 km",lgD:"ลึก >300 km",lgPin:"ตำแหน่งที่เลือก",
+ tapHint:"แตะจุดบนแผนที่เพื่อดูรายละเอียด หรือแตะที่ว่างเพื่อเลือกตำแหน่ง",shown:(a,b)=>`แสดง ${a} จาก ${b} จุด`,
  depthW:"ลึก",latest:"ล่าสุด",storm:"พายุรุนแรง",fire:"ไฟป่า",
+ locH:"ข้อมูล ณ ตำแหน่งที่เลือก",locHint:"แตะที่ใดก็ได้บนแผนที่ หรือแตะจุดแผ่นดินไหว เพื่อเปลี่ยนตำแหน่ง",
+ pBkk:"กรุงเทพฯ",pGot:"อ่าวไทย",pMe:"ตำแหน่งของฉัน",geoFail:"ระบุตำแหน่งไม่ได้ ตรวจสอบการอนุญาตเข้าถึงตำแหน่งในเบราว์เซอร์",
+ geoH:"ธรณีวิทยา",wxH:"อากาศและคุณภาพอากาศ",seaH:"สภาพทะเล",
+ age:"อายุ",lith:"หินหลัก",ma:"ล้านปี",noGeo:"ไม่มีข้อมูลแผนที่ธรณีวิทยาตรงจุดนี้ (มักเป็นทะเลหรือพื้นที่ที่ยังไม่มีข้อมูล)",
+ feels:"รู้สึกเหมือน",hum:"ความชื้น",wind:"ลม",rain:"ฝน",aqiLbl:"US AQI",
+ aqi:["ดี","ปานกลาง","มีผลต่อกลุ่มเสี่ยง","มีผลต่อสุขภาพ","มีผลต่อสุขภาพมาก","อันตราย"],
+ wave:"คลื่น",period:"คาบ",swell:"คลื่น swell",from:"มาจาก",waveNext:"ความสูงคลื่นวันนี้และพรุ่งนี้",noSea:"ไม่มีข้อมูลคลื่นตรงจุดนี้ ลองแตะจุดในทะเล",
+ loading:"กำลังโหลด…",loadFail:"โหลดข้อมูลไม่ได้",local:"เวลาท้องถิ่น",
  scNote:"แกนความลึกชี้ลงเหมือน log track เส้นประแบ่งชั้นตื้น ปานกลาง และลึก จุดที่ลึกเกิน 300 km มักอยู่ใต้ฟิจิ ตองกา และเคอร์มาเดก ซึ่งเป็นแผ่นเปลือกโลกที่มุดลงไปลึก",
- tbH:"10 อันดับขนาดใหญ่สุด",thPlace:"ตำแหน่ง",thDepth:"ลึก",thTime:"เวลาไทย",loading:"กำลังโหลด…",
- srcH:"แหล่งข้อมูล",srcNote:"ดึงข้อมูลใหม่ทุกครั้งที่เปิดหน้า และอัปเดตเองทุก 5 นาทีระหว่างเปิดค้างไว้ USGS ปรับปรุง feed ทุกประมาณ 1 นาที ค่า magnitude และตำแหน่งของเหตุการณ์ล่าสุดอาจถูกแก้ไขภายหลัง",
+ tbH:"10 อันดับขนาดใหญ่สุด",thPlace:"ตำแหน่ง",thDepth:"ลึก",thTime:"เวลาไทย",
+ apodH:"ภาพดาราศาสตร์ประจำวัน",apodEn:"คำอธิบายจาก NASA เป็นภาษาอังกฤษ",readMore:"อ่านคำอธิบาย",openVideo:"เปิดวิดีโอ",openHd:"เปิดภาพความละเอียดสูง",
+ apodLimit:"DEMO_KEY ใช้ครบโควตาแล้ว ใส่ API key ฟรีของคุณด้านล่างเพื่อใช้งานต่อ",apodFail:"โหลดภาพจาก NASA ไม่ได้",
+ keySum:"ตั้งค่า NASA API key",keyNote:"แอปใช้ DEMO_KEY เป็นค่าเริ่มต้น ซึ่งจำกัด 30 ครั้งต่อชั่วโมงและ 50 ครั้งต่อวัน สมัคร key ฟรีเพื่อเพิ่มเป็น 1,000 ครั้งต่อชั่วโมง key จะเก็บไว้ในเครื่องนี้เท่านั้น",save:"บันทึก",saved:"บันทึกแล้ว",getKey:"สมัคร key ฟรีที่ api.nasa.gov",
+ srcH:"แหล่งข้อมูล",srcNote:"แผ่นดินไหวอัปเดตเองทุก 5 นาทีระหว่างเปิดค้างไว้ ข้อมูลอากาศ คลื่น และธรณีวิทยาโหลดเมื่อเปลี่ยนตำแหน่ง ภาพ NASA โหลดวันละครั้ง ข้อมูล Open-Meteo ใช้ได้ฟรีเฉพาะการใช้งานที่ไม่ใช่เชิงพาณิชย์",
  updated:"อัปเดต ",suffix:" น.",usgsFail:"โหลดข้อมูล USGS ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วกด Refresh",eonetWarn:"EONET ไม่ตอบสนอง แสดงเฉพาะแผ่นดินไหว",
  quakeCount:"แผ่นดินไหว",mapAria:"แผนที่โลกแสดงตำแหน่งแผ่นดินไหว พายุ และไฟป่า",scAria:"กราฟกระจายความลึกเทียบกับขนาดแผ่นดินไหว"},
 en:{auto:"Auto",light:"Light",dark:"Dark",
- lede:"Live global earthquakes from USGS, plus active storms and wildfires from NASA EONET. The map is centred on the Pacific, where most earthquakes happen along subduction zones.",
+ lede:"Live global earthquakes from USGS, plus storms and wildfires from NASA EONET. Tap anywhere on the map to see the geology, weather, sea state and air quality at that spot.",
  data:"Data",f1:"M4.5+ · past day",f2:"M4.5+ · past 7 days",f3:"M2.5+ · past 7 days",f4:"M4.5+ · past 30 days",f5:"Significant · past 30 days",
  deepest:"deepest hypocenter",largest:"largest event",largestAt:"largest · ",none:"No events in this period",
  eonetLbl:"active storms and wildfires",eonetFail:"EONET data unavailable",
  mapH:"Event map",minMag:"Min magnitude",quakes:"Earthquakes",storms:"Storms",fires:"Wildfires",
- lgS:"Shallow <70 km",lgM:"Intermediate 70–300 km",lgD:"Deep >300 km",lgSize:"Circle size scales with magnitude",
- tapHint:"Tap or hover a point on the map for details",shown:(a,b)=>`Showing ${a} of ${b}`,
+ lgS:"Shallow <70 km",lgM:"Intermediate 70–300 km",lgD:"Deep >300 km",lgPin:"Selected location",
+ tapHint:"Tap a point for details, or tap empty space to pick a location",shown:(a,b)=>`Showing ${a} of ${b}`,
  depthW:"Depth",latest:"latest",storm:"Severe storm",fire:"Wildfire",
+ locH:"At the selected location",locHint:"Tap anywhere on the map, or tap an earthquake, to change the location.",
+ pBkk:"Bangkok",pGot:"Gulf of Thailand",pMe:"My location",geoFail:"Couldn't get your location. Check location permission in your browser.",
+ geoH:"Geology",wxH:"Weather and air",seaH:"Sea state",
+ age:"Age",lith:"Lithology",ma:"Ma",noGeo:"No geologic map data here (usually open sea or an area without coverage).",
+ feels:"Feels like",hum:"Humidity",wind:"Wind",rain:"Rain",aqiLbl:"US AQI",
+ aqi:["Good","Moderate","Unhealthy for sensitive groups","Unhealthy","Very unhealthy","Hazardous"],
+ wave:"Waves",period:"Period",swell:"Swell",from:"from",waveNext:"Wave height, today and tomorrow",noSea:"No wave data here. Try tapping a point at sea.",
+ loading:"Loading…",loadFail:"Couldn't load data",local:"local time",
  scNote:"Depth runs downward like a log track. Dashed lines split shallow, intermediate and deep events. Points below 300 km cluster under Fiji, Tonga and the Kermadecs, where a slab of crust sinks deep into the mantle.",
- tbH:"Top 10 by magnitude",thPlace:"Location",thDepth:"Depth",thTime:"Bangkok time",loading:"Loading…",
- srcH:"Data sources",srcNote:"Data reloads every time you open the page and every 5 minutes while it stays open. USGS updates the feed about once a minute; magnitude and location of recent events may be revised.",
+ tbH:"Top 10 by magnitude",thPlace:"Location",thDepth:"Depth",thTime:"Bangkok time",
+ apodH:"Astronomy picture of the day",apodEn:"",readMore:"Read the explanation",openVideo:"Open video",openHd:"Open full resolution",
+ apodLimit:"DEMO_KEY has hit its limit. Add your free API key below to keep going.",apodFail:"Couldn't load the NASA picture",
+ keySum:"NASA API key",keyNote:"The app uses DEMO_KEY by default, limited to 30 requests an hour and 50 a day. A free personal key raises this to 1,000 an hour. The key is stored on this device only.",save:"Save",saved:"Saved",getKey:"Get a free key at api.nasa.gov",
+ srcH:"Data sources",srcNote:"Earthquakes refresh every 5 minutes while the page is open. Weather, waves and geology load when you change location. The NASA picture loads once a day. Open-Meteo data is free for non-commercial use only.",
  updated:"Updated ",suffix:"",usgsFail:"Couldn't load USGS data. Check your connection and tap Refresh.",eonetWarn:"EONET not responding; showing earthquakes only",
  quakeCount:"earthquakes",mapAria:"World map of earthquakes, storms and wildfires",scAria:"Scatter plot of earthquake depth against magnitude"}};
 
@@ -228,8 +332,19 @@ const cls=d=>d<70?"shallow":d<=300?"mid":"deep";
 const col=d=>`var(--${cls(d)})`;
 const fmt=ms=>new Date(ms).toLocaleString(lang==="th"?"th-TH":"en-GB",{timeZone:"Asia/Bangkok",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=(v,d=0)=>v==null||isNaN(v)?"–":(+v).toFixed(d);
+const compass=deg=>deg==null?"":["N","NE","E","SE","S","SW","W","NW"][Math.round(((deg%360)+360)%360/45)%8];
+const latlon=(la,lo)=>`${Math.abs(la).toFixed(2)}°${la>=0?"N":"S"}, ${Math.abs(lo).toFixed(2)}°${lo>=0?"E":"W"}`;
 let Q=[],E=[],eonetOk=false,meta=null,status="",infoFn=null;
 
+/* ---------- theme & language ---------- */
+function applyTheme(){
+  const root=document.documentElement;
+  if(theme==="auto")root.removeAttribute("data-theme");else root.setAttribute("data-theme",theme);
+  document.querySelectorAll("[data-theme-btn]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.themeBtn===theme));
+  const dark=theme==="dark"||(theme==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
+  document.querySelectorAll('meta[name="theme-color"]').forEach(mt=>{mt.removeAttribute("media");mt.content=dark?"#0c1318":"#f2f4f6"});
+}
 function applyLang(){
   document.documentElement.lang=lang;
   document.querySelectorAll("[data-i18n]").forEach(el=>{el.textContent=t(el.dataset.i18n)});
@@ -238,27 +353,29 @@ function applyLang(){
   if(status)$("status").textContent=t(status);
   if(infoFn)infoFn();else $("info").textContent=t("tapHint");
   if(meta)summarise();else{$("stamp").textContent=t("loading");$("tb").innerHTML=`<tr><td colspan="4" style="color:var(--muted)">${t("loading")}</td></tr>`;$("kCountLbl").textContent=t("quakeCount");$("kMaxPlace").textContent=t("largest");$("kEonetLbl").textContent=t("eonetLbl");}
-  render();
-}
-function applyTheme(){
-  const root=document.documentElement;
-  if(theme==="auto")root.removeAttribute("data-theme");else root.setAttribute("data-theme",theme);
-  document.querySelectorAll("[data-theme-btn]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.themeBtn===theme));
-  const dark=theme==="dark"||(theme==="auto"&&matchMedia("(prefers-color-scheme: dark)").matches);
-  document.querySelectorAll('meta[name="theme-color"]').forEach(mt=>{mt.removeAttribute("media");mt.content=dark?"#0c1318":"#f2f4f6"});
+  render();renderLoc();renderApod();
 }
 document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>{lang=b.dataset.lang;store.set("rofw-lang",lang);applyLang()}));
 document.querySelectorAll("[data-theme-btn]").forEach(b=>b.addEventListener("click",()=>{theme=b.dataset.themeBtn;store.set("rofw-theme",theme);applyTheme()}));
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",applyTheme);
 
+/* ---------- map ---------- */
 const W=960,H=500;
 const proj=d3.geoNaturalEarth1().rotate([-150,0]).fitExtent([[6,6],[W-6,H-6]],{type:"Sphere"});
 const path=d3.geoPath(proj);
-const svg=d3.select("#map").append("svg").attr("viewBox",`0 0 ${W} ${H}`);
+const svg=d3.select("#map").append("svg").attr("viewBox",`0 0 ${W} ${H}`).style("cursor","crosshair");
 svg.append("path").datum({type:"Sphere"}).attr("d",path).attr("fill","var(--ocean)");
 svg.append("path").datum(d3.geoGraticule10()).attr("d",path).attr("fill","none").attr("stroke","var(--line)").attr("stroke-width",.5);
 svg.append("path").datum(topojson.feature(LAND,LAND.objects.land)).attr("d",path).attr("fill","var(--land)").attr("stroke","var(--coast)").attr("stroke-width",.5);
 const gQ=svg.append("g"),gE=svg.append("g");
+const pin=svg.append("g").attr("pointer-events","none");
+pin.append("circle").attr("r",11).attr("fill","none").attr("stroke","var(--ink)").attr("stroke-width",2.2);
+pin.append("circle").attr("r",2.5).attr("fill","var(--ink)");
+svg.on("click",e=>{
+  const [x,y]=d3.pointer(e,svg.node());const ll=proj.invert([x,y]);
+  if(!ll||!d3.geoContains({type:"Sphere"},ll))return;
+  setLoc({lat:+ll[1].toFixed(3),lon:+ll[0].toFixed(3),name:null});
+});
 
 const sW=460,sH=380,m={l:52,r:14,t:12,b:40};
 const sv=d3.select("#scatter").append("svg").attr("viewBox",`0 0 ${sW} ${sH}`);
@@ -268,8 +385,8 @@ sv.append("text").attr("transform",`translate(13,${m.t+2}) rotate(90)`).attr("fi
 
 let selected=null;
 function pick(el){if(selected)selected.classList.remove("sel");selected=el;if(el)el.classList.add("sel");}
-function showQ(q){infoFn=()=>{$("info").innerHTML=`<b>M${q.mag.toFixed(1)}</b> · ${esc(q.place)}<br><span class="mono">${t("depthW")} ${q.depth.toFixed(1)} km · ${fmt(q.time)}${t("suffix")} · lat ${q.lat.toFixed(2)}, lon ${q.lon.toFixed(2)}</span>${q.url?` · <a href="${esc(q.url)}" target="_blank" rel="noopener">USGS</a>`:""}`};infoFn();}
-function showE(d){infoFn=()=>{$("info").innerHTML=`<b>${esc(d.title)}</b><br><span class="mono">${d.type==="S"?t("storm"):t("fire")} · ${t("latest")} ${fmt(d.date)}${t("suffix")} · lat ${d.lat.toFixed(2)}, lon ${d.lon.toFixed(2)}</span>`};infoFn();}
+function showQ(q){infoFn=()=>{$("info").innerHTML=`<b>M${q.mag.toFixed(1)}</b> · ${esc(q.place)}<br><span class="mono">${t("depthW")} ${q.depth.toFixed(1)} km · ${fmt(q.time)}${t("suffix")} · ${latlon(q.lat,q.lon)}</span>${q.url?` · <a href="${esc(q.url)}" target="_blank" rel="noopener">USGS</a>`:""}`};infoFn();}
+function showE(d){infoFn=()=>{$("info").innerHTML=`<b>${esc(d.title)}</b><br><span class="mono">${d.type==="S"?t("storm"):t("fire")} · ${t("latest")} ${fmt(d.date)}${t("suffix")} · ${latlon(d.lat,d.lon)}</span>`};infoFn();}
 const axStyle=g=>g.selectAll("text").attr("fill","var(--muted)").style("font-family","var(--mono)").style("font-size","11px");
 
 function render(){
@@ -283,14 +400,17 @@ function render(){
     .attr("class","quake").attr("cx",d=>proj([d.lon,d.lat])[0]).attr("cy",d=>proj([d.lon,d.lat])[1])
     .attr("r",d=>r(d.mag)).attr("fill",d=>col(d.depth)).attr("fill-opacity",.78)
     .attr("stroke","var(--surface)").attr("stroke-width",1)
-    .on("click mouseenter",function(e,d){pick(this);showQ(d)});
+    .on("mouseenter",function(e,d){pick(this);showQ(d)})
+    .on("click",function(e,d){e.stopPropagation();pick(this);showQ(d);setLoc({lat:d.lat,lon:d.lon,name:d.place})});
   const ev=E.filter(d=>d.type==="S"?$("lyS").checked:$("lyF").checked);
   gE.selectAll("path").data(ev,d=>d.id).join("path")
     .attr("transform",d=>`translate(${proj([d.lon,d.lat])})`)
     .attr("d",d=>d.type==="S"?d3.symbol(d3.symbolCircle,150)():d3.symbol(d3.symbolDiamond,70)())
     .attr("fill",d=>d.type==="S"?"none":"var(--fire)").attr("stroke",d=>d.type==="S"?"var(--storm)":"var(--surface)")
     .attr("stroke-width",d=>d.type==="S"?2.2:1).style("cursor","pointer")
-    .on("click mouseenter",function(e,d){pick(null);showE(d)});
+    .on("mouseenter",function(e,d){pick(null);showE(d)})
+    .on("click",function(e,d){e.stopPropagation();pick(null);showE(d);setLoc({lat:d.lat,lon:d.lon,name:d.title})});
+  pin.raise();
   const x=d3.scaleLinear().domain([Math.floor(lo*2)/2-.1,Math.ceil(hi*2)/2]).range([m.l,sW-m.r]);
   const dmax=Math.max(100,...Q.map(d=>d.depth));
   const y=d3.scaleLinear().domain([0,Math.ceil(dmax/100)*100]).range([m.t,sH-m.b]);
@@ -338,7 +458,6 @@ async function loadEonet(){
     eonetOk=true;
   }catch(e){E=[];eonetOk=false;}
 }
-
 let busy=false;
 async function refresh(full){
   if(busy)return;busy=true;$("refresh").disabled=true;status="loading";$("status").textContent=t("loading");
@@ -352,12 +471,142 @@ async function refresh(full){
   }catch(e){status="usgsFail";}
   finally{busy=false;$("refresh").disabled=false;$("status").textContent=status?t(status):"";}
 }
-$("refresh").addEventListener("click",()=>refresh(true));
+
+/* ---------- selected location: Macrostrat + Open-Meteo ---------- */
+const PRESETS={bkk:{lat:13.75,lon:100.5,key:"pBkk"},got:{lat:9.2,lon:101.4,key:"pGot"}};
+let loc=null,L={geo:null,wx:null,air:null,sea:null},locSeq=0;
+try{loc=JSON.parse(store.get("rofw-loc","null"))}catch(e){}
+if(!loc||typeof loc.lat!=="number")loc={lat:13.75,lon:100.5,preset:"bkk"};
+
+async function getJSON(u,signal){const r=await fetch(u,{signal});if(!r.ok)throw new Error(r.status);return r.json();}
+let ctrl=null;
+function setLoc(p){
+  loc=p;store.set("rofw-loc",JSON.stringify(p));
+  pin.attr("transform",`translate(${proj([p.lon,p.lat])})`);
+  const seq=++locSeq;if(ctrl)ctrl.abort();ctrl=new AbortController();const sg=ctrl.signal;
+  L={geo:"loading",wx:"loading",air:"loading",sea:"loading"};renderLoc();
+  const done=(k,fn)=>fn.then(v=>{if(seq===locSeq){L[k]=v;renderLoc()}}).catch(e=>{if(seq===locSeq&&e.name!=="AbortError"){L[k]="error";renderLoc()}});
+  const {lat,lon}=p;
+  done("geo",getJSON(`https://macrostrat.org/api/v2/geologic_units/map?lat=${lat}&lng=${lon}`,sg).then(j=>j.success?.data||[]));
+  done("wx",getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&timezone=auto`,sg));
+  done("air",getJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=auto`,sg));
+  done("sea",getJSON(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_direction,wave_period,swell_wave_height&hourly=wave_height&forecast_days=2&timezone=auto`,sg));
+}
+const busyHTML=()=>`<p class="muted">${t("loading")}</p>`;
+const failHTML=()=>`<p class="muted">${t("loadFail")}</p>`;
+function wxText(c){const w=WX[lang];if(c==null)return"";if(w[c])return w[c];
+  if(c>=51&&c<=57)return w.d;if(c>=61&&c<=67)return w.r;if(c>=71&&c<=77||c===85||c===86)return w.s;if(c>=80&&c<=82)return w.sh;if(c>=95)return w.t;return"";}
+function aqiBand(v){return v==null?null:v<=50?0:v<=100?1:v<=150?2:v<=200?3:v<=300?4:5;}
+function renderLoc(){
+  if(!loc)return;
+  const name=loc.preset?t(PRESETS[loc.preset].key):(loc.name||"");
+  $("locName").textContent=(name?name+" · ":"")+latlon(loc.lat,loc.lon);
+  document.querySelectorAll("[data-preset]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.preset===loc.preset));
+  /* geology */
+  const g=L.geo;
+  $("geoBody").innerHTML=g==="loading"||g==null?busyHTML():g==="error"?failHTML():!g.length?`<p class="muted">${t("noGeo")}</p>`:
+    g.slice(0,2).map(u=>`<div class="geo-unit"><span class="swatch" style="background:${/^#[0-9a-f]{3,8}$/i.test(u.color||"")?u.color:"var(--line)"}"></span>
+      <div style="min-width:0"><div class="big-s">${esc(u.best_int_name||u.b_int_name||"")}</div>
+      <div>${esc(u.name||u.strat_name||"")}</div>
+      <dl class="kv"><dt>${t("age")}</dt><dd class="mono">${num(u.b_age,1)}–${num(u.t_age,1)} ${t("ma")}</dd>
+      ${u.lith?`<dt>${t("lith")}</dt><dd>${esc(u.lith)}</dd>`:""}</dl>
+      ${u.descrip?`<p class="muted small">${esc(u.descrip)}</p>`:""}</div></div>`).join("");
+  /* weather + air */
+  const w=L.wx,a=L.air;
+  if(w==="loading"||w==null)$("wxBody").innerHTML=busyHTML();
+  else if(w==="error")$("wxBody").innerHTML=failHTML();
+  else{
+    const c=w.current||{};
+    let air="";
+    if(a&&a!=="loading"&&a!=="error"&&a.current){const v=a.current.us_aqi,b=aqiBand(v);
+      air=`<div class="aqi-row"><span class="pill" data-band="${b??""}">${t("aqiLbl")} ${num(v)}${b!=null?" · "+t("aqi")[b]:""}</span>
+        <span class="mono small muted">PM2.5 ${num(a.current.pm2_5,1)} · PM10 ${num(a.current.pm10,1)} µg/m³</span></div>`;}
+    else if(a==="loading")air=`<p class="muted small">${t("loading")}</p>`;
+    $("wxBody").innerHTML=`<div class="big mono">${num(c.temperature_2m,1)}°C</div>
+      <div>${esc(wxText(c.weather_code))}</div>
+      <dl class="kv"><dt>${t("feels")}</dt><dd class="mono">${num(c.apparent_temperature,1)}°C</dd>
+      <dt>${t("hum")}</dt><dd class="mono">${num(c.relative_humidity_2m)}%</dd>
+      <dt>${t("wind")}</dt><dd class="mono">${num(c.wind_speed_10m)} km/h ${compass(c.wind_direction_10m)}</dd>
+      <dt>${t("rain")}</dt><dd class="mono">${num(c.precipitation,1)} mm</dd></dl>${air}
+      <p class="muted small mono">${esc((c.time||"").slice(11,16))} ${esc(w.timezone_abbreviation||"")} · ${t("local")}</p>`;
+  }
+  /* sea */
+  const s=L.sea;
+  if(s==="loading"||s==null)$("seaBody").innerHTML=busyHTML();
+  else if(s==="error"||!s.current||s.current.wave_height==null)$("seaBody").innerHTML=`<p class="muted">${t("noSea")}</p>`;
+  else{const c=s.current;
+    $("seaBody").innerHTML=`<div class="big mono">${num(c.wave_height,1)} m</div>
+      <dl class="kv"><dt>${t("wave")}</dt><dd class="mono">${t("from")} ${compass(c.wave_direction)} (${num(c.wave_direction)}°)</dd>
+      <dt>${t("period")}</dt><dd class="mono">${num(c.wave_period,1)} s</dd>
+      <dt>${t("swell")}</dt><dd class="mono">${num(c.swell_wave_height,1)} m</dd></dl>
+      <div class="muted small">${t("waveNext")}</div><div id="spark"></div>`;
+    spark(s);}
+}
+function spark(s){
+  const h=s.hourly;if(!h||!h.wave_height)return;
+  const vals=h.wave_height.map(v=>v??NaN),n=vals.length;if(!n)return;
+  const w=300,hh=74,p={l:36,r:6,t:6,b:16};
+  const mx=Math.max(.5,d3.max(vals.filter(v=>!isNaN(v)))||.5);
+  const x=d3.scaleLinear().domain([0,n-1]).range([p.l,w-p.r]),y=d3.scaleLinear().domain([0,mx*1.1]).range([hh-p.b,p.t]);
+  const el=d3.select("#spark").append("svg").attr("viewBox",`0 0 ${w} ${hh}`);
+  el.append("g").attr("transform",`translate(${p.l},0)`).call(d3.axisLeft(y).ticks(3).tickSize(-(w-p.l-p.r)).tickFormat(d=>d+"m")).call(axStyle).call(g=>g.selectAll("line").attr("stroke","var(--line)").attr("stroke-opacity",.6)).call(g=>g.select(".domain").remove());
+  el.append("path").datum(vals).attr("fill","var(--deep)").attr("fill-opacity",.12).attr("d",d3.area().defined(v=>!isNaN(v)).x((v,i)=>x(i)).y0(y(0)).y1(v=>y(v)));
+  el.append("path").datum(vals).attr("fill","none").attr("stroke","var(--deep)").attr("stroke-width",2).attr("stroke-linejoin","round").attr("d",d3.line().defined(v=>!isNaN(v)).x((v,i)=>x(i)).y(v=>y(v)));
+  [0,24].filter(i=>i<n).forEach(i=>el.append("line").attr("x1",x(i)).attr("x2",x(i)).attr("y1",p.t).attr("y2",hh-p.b).attr("stroke","var(--line)"));
+  const now=(s.current?.time||"").slice(0,13);const idx=h.time.findIndex(tm=>tm.slice(0,13)===now);
+  if(idx>=0&&!isNaN(vals[idx]))el.append("circle").attr("cx",x(idx)).attr("cy",y(vals[idx])).attr("r",4.5).attr("fill","var(--deep)").attr("stroke","var(--surface)").attr("stroke-width",2);
+  el.append("text").attr("x",x(0)).attr("y",hh-3).attr("fill","var(--muted)").style("font-size","10px").style("font-family","var(--mono)").text("00:00");
+  if(n>24)el.append("text").attr("x",x(24)).attr("y",hh-3).attr("fill","var(--muted)").style("font-size","10px").style("font-family","var(--mono)").text("+24h");
+}
+document.querySelectorAll("[data-preset]").forEach(b=>b.addEventListener("click",()=>{const p=PRESETS[b.dataset.preset];setLoc({lat:p.lat,lon:p.lon,preset:b.dataset.preset})}));
+$("myLoc").addEventListener("click",()=>{
+  if(!navigator.geolocation){$("locName").textContent=t("geoFail");return;}
+  $("myLoc").disabled=true;
+  navigator.geolocation.getCurrentPosition(pos=>{$("myLoc").disabled=false;setLoc({lat:+pos.coords.latitude.toFixed(3),lon:+pos.coords.longitude.toFixed(3),name:t("pMe")})},
+    ()=>{$("myLoc").disabled=false;$("locName").textContent=t("geoFail")},{timeout:10000,maximumAge:600000});
+});
+
+/* ---------- NASA APOD ---------- */
+let apod=null,apodErr="";
+function apodKey(){return store.get("rofw-nasa-key","")||"DEMO_KEY";}
+$("apiKey").value=store.get("rofw-nasa-key","");
+async function loadApod(force){
+  try{const c=JSON.parse(store.get("rofw-apod","null"));if(!force&&c&&Date.now()-c.at<6*3600e3){apod=c.data;renderApod();return;}}catch(e){}
+  apod=null;apodErr="";renderApod();
+  try{
+    const r=await fetch(`https://api.nasa.gov/planetary/apod?thumbs=true&api_key=${encodeURIComponent(apodKey())}`);
+    if(r.status===429){apodErr="apodLimit";renderApod();return;}
+    if(!r.ok)throw new Error(r.status);
+    apod=await r.json();store.set("rofw-apod",JSON.stringify({at:Date.now(),data:apod}));
+  }catch(e){apodErr="apodFail";}
+  renderApod();
+}
+function renderApod(){
+  const el=$("apodBody");
+  if(apodErr){el.innerHTML=`<p class="muted">${t(apodErr)}</p>`;return;}
+  if(!apod){el.innerHTML=busyHTML();return;}
+  const isImg=apod.media_type==="image";
+  const img=isImg?apod.url:apod.thumbnail_url;
+  const link=isImg?(apod.hdurl||apod.url):apod.url;
+  const safe=u=>/^https?:\/\//.test(u||"")?u:"";
+  el.innerHTML=`${safe(img)?`<a class="apod-img" href="${esc(safe(link))}" target="_blank" rel="noopener"><img src="${esc(safe(img))}" alt="${esc(apod.title)}" loading="lazy"></a>`:""}
+    <div style="display:grid;gap:6px;min-width:0">
+      <div class="mono small muted">${esc(apod.date)}${apod.copyright?" · © "+esc(apod.copyright.trim()):""}</div>
+      <h3 style="margin:0">${esc(apod.title)}</h3>
+      ${safe(link)?`<a href="${esc(safe(link))}" target="_blank" rel="noopener">${isImg?t("openHd"):t("openVideo")}</a>`:""}
+      <details><summary>${t("readMore")}</summary>${t("apodEn")?`<p class="muted small">${t("apodEn")}</p>`:""}<p class="small" style="margin:6px 0 0">${esc(apod.explanation)}</p></details>
+    </div>`;
+}
+$("keyForm").addEventListener("submit",e=>{e.preventDefault();store.set("rofw-nasa-key",$("apiKey").value.trim());
+  const b=e.target.querySelector("button");b.textContent=t("saved");setTimeout(()=>b.textContent=t("save"),1500);loadApod(true);});
+
+/* ---------- boot ---------- */
+$("refresh").addEventListener("click",()=>{refresh(true);setLoc(loc);});
 $("feed").addEventListener("change",()=>{$("mag").value=0;refresh(false);});
 ["mag","lyQ","lyS","lyF"].forEach(id=>$(id).addEventListener("input",render));
 setInterval(()=>{if(!document.hidden)refresh(false)},300000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)refresh(false)});
-applyTheme();applyLang();refresh(true);
+applyTheme();applyLang();refresh(true);setLoc(loc);loadApod(false);
 </script>
 
 </body>

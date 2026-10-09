@@ -117,6 +117,9 @@ h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0;text-wrap:
 .apod-img img{display:block;width:100%;max-height:420px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--ocean)}
 .apod details summary,.keybox summary{cursor:pointer;font-size:14px}
 .keybox{border-top:1px solid var(--line);padding-top:10px;font-size:14px}
+.loc-place{font-size:16px;margin-top:2px;overflow-wrap:anywhere}
+.loc-place b{font-weight:500}
+.osm{font-size:11px;color:var(--muted);margin-left:4px;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -188,6 +191,7 @@ h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0;text-wrap:
     <div class="loc-head">
       <div style="min-width:0">
         <h2 id="locH" data-i18n="locH"></h2>
+        <div class="loc-place" id="locPlace"></div>
         <div class="mono loc-name" id="locName"></div>
       </div>
       <div class="chips">
@@ -251,6 +255,7 @@ h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0;text-wrap:
       <a href="https://apod.nasa.gov/" target="_blank" rel="noopener">NASA APOD</a>
       <a href="https://macrostrat.org/" target="_blank" rel="noopener">Macrostrat (CC-BY 4.0)</a>
       <a href="https://open-meteo.com/" target="_blank" rel="noopener">Weather data by Open-Meteo.com</a>
+      <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">Place names © OpenStreetMap contributors</a>
     </div>
   </section>
 </div>
@@ -282,6 +287,7 @@ th:{auto:"อัตโนมัติ",light:"สว่าง",dark:"มืด",
  tapHint:"แตะจุดบนแผนที่เพื่อดูรายละเอียด หรือแตะที่ว่างเพื่อเลือกตำแหน่ง",shown:(a,b)=>`แสดง ${a} จาก ${b} จุด`,
  depthW:"ลึก",latest:"ล่าสุด",storm:"พายุรุนแรง",fire:"ไฟป่า",
  locH:"ข้อมูล ณ ตำแหน่งที่เลือก",locHint:"แตะที่ใดก็ได้บนแผนที่ หรือแตะจุดแผ่นดินไหว เพื่อเปลี่ยนตำแหน่ง",
+ noPlace:"ไม่พบชื่อสถานที่ (อาจอยู่กลางทะเล)",findingPlace:"กำลังหาชื่อสถานที่…",
  pBkk:"กรุงเทพฯ",pGot:"อ่าวไทย",pMe:"ตำแหน่งของฉัน",geoFail:"ระบุตำแหน่งไม่ได้ ตรวจสอบการอนุญาตเข้าถึงตำแหน่งในเบราว์เซอร์",
  geoH:"ธรณีวิทยา",wxH:"อากาศและคุณภาพอากาศ",seaH:"สภาพทะเล",
  age:"อายุ",lith:"หินหลัก",ma:"ล้านปี",noGeo:"ไม่มีข้อมูลแผนที่ธรณีวิทยาตรงจุดนี้ (มักเป็นทะเลหรือพื้นที่ที่ยังไม่มีข้อมูล)",
@@ -293,6 +299,7 @@ th:{auto:"อัตโนมัติ",light:"สว่าง",dark:"มืด",
  tbH:"10 อันดับขนาดใหญ่สุด",thPlace:"ตำแหน่ง",thDepth:"ลึก",thTime:"เวลาไทย",
  apodH:"ภาพดาราศาสตร์ประจำวัน",apodEn:"คำอธิบายจาก NASA เป็นภาษาอังกฤษ",readMore:"อ่านคำอธิบาย",openVideo:"เปิดวิดีโอ",openHd:"เปิดภาพความละเอียดสูง",
  apodLimit:"DEMO_KEY ใช้ครบโควตาแล้ว ใส่ API key ฟรีของคุณด้านล่างเพื่อใช้งานต่อ",apodFail:"โหลดภาพจาก NASA ไม่ได้",
+ apodPh:"วันนี้ NASA API ส่งโลโก้มาแทนภาพจริง แตะลิงก์ด้านล่างเพื่อดูภาพของวันนี้ที่เว็บ NASA แอปจะลองโหลดใหม่ทุกชั่วโมง",apodOpen:"เปิดภาพของวันนี้ที่ apod.nasa.gov",
  apodWhy:"บริการ APOD ของ NASA ล่มบ่อย ลองกดลองใหม่อีกครั้งในภายหลัง หรือเปิดดูภาพของวันนี้ที่เว็บ NASA โดยตรง",retry:"ลองใหม่",
  keyBad:"API key ที่บันทึกไว้ใช้ไม่ได้ จึงใช้ DEMO_KEY แทน ตรวจสอบ key อีกครั้ง",apodStale:"แสดงภาพล่าสุดที่เคยโหลดไว้ เพราะโหลดภาพใหม่ไม่ได้",
  keySum:"ตั้งค่า NASA API key",keyNote:"แอปใช้ DEMO_KEY เป็นค่าเริ่มต้น ซึ่งจำกัด 30 ครั้งต่อชั่วโมงและ 50 ครั้งต่อวัน สมัคร key ฟรีเพื่อเพิ่มเป็น 1,000 ครั้งต่อชั่วโมง key จะเก็บไว้ในเครื่องนี้เท่านั้น",save:"บันทึก",saved:"บันทึกแล้ว",getKey:"สมัคร key ฟรีที่ api.nasa.gov",
@@ -309,6 +316,7 @@ en:{auto:"Auto",light:"Light",dark:"Dark",
  tapHint:"Tap a point for details, or tap empty space to pick a location",shown:(a,b)=>`Showing ${a} of ${b}`,
  depthW:"Depth",latest:"latest",storm:"Severe storm",fire:"Wildfire",
  locH:"At the selected location",locHint:"Tap anywhere on the map, or tap an earthquake, to change the location.",
+ noPlace:"No place name found (probably open sea)",findingPlace:"Finding place name…",
  pBkk:"Bangkok",pGot:"Gulf of Thailand",pMe:"My location",geoFail:"Couldn't get your location. Check location permission in your browser.",
  geoH:"Geology",wxH:"Weather and air",seaH:"Sea state",
  age:"Age",lith:"Lithology",ma:"Ma",noGeo:"No geologic map data here (usually open sea or an area without coverage).",
@@ -320,6 +328,7 @@ en:{auto:"Auto",light:"Light",dark:"Dark",
  tbH:"Top 10 by magnitude",thPlace:"Location",thDepth:"Depth",thTime:"Bangkok time",
  apodH:"Astronomy picture of the day",apodEn:"",readMore:"Read the explanation",openVideo:"Open video",openHd:"Open full resolution",
  apodLimit:"DEMO_KEY has hit its limit. Add your free API key below to keep going.",apodFail:"Couldn't load the NASA picture",
+ apodPh:"NASA's API sent its logo instead of today's picture. Tap the link to see it on the NASA site. The app checks again every hour.",apodOpen:"Open today's picture on apod.nasa.gov",
  apodWhy:"NASA's APOD service goes down fairly often. Try again later, or open today's picture on the NASA site.",retry:"Try again",
  keyBad:"Your saved API key was rejected, so the app used DEMO_KEY instead. Check the key.",apodStale:"Showing the last picture that loaded, because a new one couldn't be fetched",
  keySum:"NASA API key",keyNote:"The app uses DEMO_KEY by default, limited to 30 requests an hour and 50 a day. A free personal key raises this to 1,000 an hour. The key is stored on this device only.",save:"Save",saved:"Saved",getKey:"Get a free key at api.nasa.gov",
@@ -359,7 +368,7 @@ function applyLang(){
   if(meta)summarise();else{$("stamp").textContent=t("loading");$("tb").innerHTML=`<tr><td colspan="4" style="color:var(--muted)">${t("loading")}</td></tr>`;$("kCountLbl").textContent=t("quakeCount");$("kMaxPlace").textContent=t("largest");$("kEonetLbl").textContent=t("eonetLbl");}
   render();renderLoc();renderApod();
 }
-document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>{lang=b.dataset.lang;store.set("rofw-lang",lang);applyLang()}));
+document.querySelectorAll("[data-lang]").forEach(b=>b.addEventListener("click",()=>{lang=b.dataset.lang;store.set("rofw-lang",lang);if(loc)lookupPlace();applyLang()}));
 document.querySelectorAll("[data-theme-btn]").forEach(b=>b.addEventListener("click",()=>{theme=b.dataset.themeBtn;store.set("rofw-theme",theme);applyTheme()}));
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",applyTheme);
 
@@ -481,6 +490,7 @@ const PRESETS={bkk:{lat:13.75,lon:100.5,key:"pBkk"},got:{lat:9.2,lon:101.4,key:"
 let loc=null,L={geo:null,wx:null,air:null,sea:null},locSeq=0;
 try{loc=JSON.parse(store.get("rofw-loc","null"))}catch(e){}
 if(!loc||typeof loc.lat!=="number")loc={lat:13.75,lon:100.5,preset:"bkk"};
+if(loc.name==="My location"||loc.name==="ตำแหน่งของฉัน"){loc.mine=true;delete loc.name;}
 
 async function getJSON(u,signal){const r=await fetch(u,{signal});if(!r.ok)throw new Error(r.status);return r.json();}
 let ctrl=null;
@@ -488,13 +498,40 @@ function setLoc(p){
   loc=p;store.set("rofw-loc",JSON.stringify(p));
   pin.attr("transform",`translate(${proj([p.lon,p.lat])})`);
   const seq=++locSeq;if(ctrl)ctrl.abort();ctrl=new AbortController();const sg=ctrl.signal;
-  L={geo:"loading",wx:"loading",air:"loading",sea:"loading"};renderLoc();
+  L={geo:"loading",wx:"loading",air:"loading",sea:"loading"};lookupPlace();renderLoc();
   const done=(k,fn)=>fn.then(v=>{if(seq===locSeq){L[k]=v;renderLoc()}}).catch(e=>{if(seq===locSeq&&e.name!=="AbortError"){L[k]="error";renderLoc()}});
   const {lat,lon}=p;
   done("geo",getJSON(`https://macrostrat.org/api/v2/geologic_units/map?lat=${lat}&lng=${lon}`,sg).then(j=>j.success?.data||[]));
   done("wx",getJSON(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m&timezone=auto`,sg));
   done("air",getJSON(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=auto`,sg));
   done("sea",getJSON(`https://marine-api.open-meteo.com/v1/marine?latitude=${lat}&longitude=${lon}&current=wave_height,wave_direction,wave_period,swell_wave_height&hourly=wave_height&forecast_days=2&timezone=auto`,sg));
+}
+/* ---------- place name: OpenStreetMap Nominatim (≤1 req/s, cached, rounded coords) ---------- */
+let place=null,placeTimer=null,lastGeo=0;
+function placeKey(p){return `${lang}|${p.lat.toFixed(2)},${p.lon.toFixed(2)}`;}
+function placeCache(){try{return JSON.parse(store.get("rofw-places","{}"))||{}}catch(e){return{}}}
+function needsPlace(p){return p&&!p.preset&&(!p.name||p.mine);}
+function lookupPlace(){
+  clearTimeout(placeTimer);
+  if(!needsPlace(loc)){place=null;return;}
+  const k=placeKey(loc),c=placeCache();
+  if(k in c){place=c[k];renderLoc();return;}
+  place="loading";
+  const p=loc,wait=Math.max(600,1100-(Date.now()-lastGeo));
+  placeTimer=setTimeout(async()=>{
+    lastGeo=Date.now();
+    let v="";
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&lat=${p.lat.toFixed(2)}&lon=${p.lon.toFixed(2)}&accept-language=${lang}`);
+      if(r.ok){const j=await r.json();const a=j.address||{};
+        const local=a.city||a.town||a.village||a.municipality||a.county||a.suburb||a.district||"";
+        const region=a.state||a.province||a.region||"";
+        v=[local,region!==local?region:"",a.country||""].filter(Boolean).join(", ")||j.name||"";}
+      else if(r.status!==404)throw 0;
+      const cc=placeCache();cc[k]=v;const keys=Object.keys(cc);if(keys.length>60)delete cc[keys[0]];store.set("rofw-places",JSON.stringify(cc));
+    }catch(e){v=null;}
+    if(loc===p){place=v;renderLoc();}
+  },wait);
 }
 const busyHTML=()=>`<p class="muted">${t("loading")}</p>`;
 const failHTML=()=>`<p class="muted">${t("loadFail")}</p>`;
@@ -503,8 +540,15 @@ function wxText(c){const w=WX[lang];if(c==null)return"";if(w[c])return w[c];
 function aqiBand(v){return v==null?null:v<=50?0:v<=100?1:v<=150?2:v<=200?3:v<=300?4:5;}
 function renderLoc(){
   if(!loc)return;
-  const name=loc.preset?t(PRESETS[loc.preset].key):(loc.name||"");
-  $("locName").textContent=(name?name+" · ":"")+latlon(loc.lat,loc.lon);
+  const tag=loc.preset?t(PRESETS[loc.preset].key):loc.mine?t("pMe"):(loc.name||"");
+  let placeHTML="";
+  if(needsPlace(loc)){
+    placeHTML=place==="loading"?`<span class="muted">${t("findingPlace")}</span>`:
+      place?`<b>${esc(place)}</b> <a class="osm" href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a>`:
+      place===""?`<span class="muted">${t("noPlace")}</span>`:"";
+  }else if(tag)placeHTML=`<b>${esc(tag)}</b>`;
+  $("locPlace").innerHTML=placeHTML;
+  $("locName").textContent=(needsPlace(loc)&&tag?tag+" · ":"")+latlon(loc.lat,loc.lon);
   document.querySelectorAll("[data-preset]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.preset===loc.preset));
   /* geology */
   const g=L.geo;
@@ -566,7 +610,7 @@ document.querySelectorAll("[data-preset]").forEach(b=>b.addEventListener("click"
 $("myLoc").addEventListener("click",()=>{
   if(!navigator.geolocation){$("locName").textContent=t("geoFail");return;}
   $("myLoc").disabled=true;
-  navigator.geolocation.getCurrentPosition(pos=>{$("myLoc").disabled=false;setLoc({lat:+pos.coords.latitude.toFixed(3),lon:+pos.coords.longitude.toFixed(3),name:t("pMe")})},
+  navigator.geolocation.getCurrentPosition(pos=>{$("myLoc").disabled=false;setLoc({lat:+pos.coords.latitude.toFixed(3),lon:+pos.coords.longitude.toFixed(3),mine:true})},
     ()=>{$("myLoc").disabled=false;$("locName").textContent=t("geoFail")},{timeout:10000,maximumAge:600000});
 });
 
@@ -574,6 +618,8 @@ $("myLoc").addEventListener("click",()=>{
 let apod=null,apodErr="",apodDetail="",apodNote="";
 function apodKey(){return store.get("rofw-nasa-key","")||"DEMO_KEY";}
 $("apiKey").value=store.get("rofw-nasa-key","");
+function isPlaceholder(a){return !!a&&(/^nasa science$/i.test((a.title||"").trim())||/nasa[-_ ]?(logo|insignia|meatball)/i.test(a.url||""));}
+function apodPage(d){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||"");return m?`https://apod.nasa.gov/apod/ap${m[1].slice(2)}${m[2]}${m[3]}.html`:"https://apod.nasa.gov/apod/astropix.html";}
 async function apodFetch(key){
   const c=new AbortController(),tm=setTimeout(()=>c.abort(),15000);
   try{
@@ -586,7 +632,7 @@ async function apodFetch(key){
 }
 async function loadApod(force){
   let cached=null;try{cached=JSON.parse(store.get("rofw-apod","null"))}catch(e){}
-  if(!force&&cached&&Date.now()-cached.at<6*3600e3){apod=cached.data;apodErr="";apodNote="";renderApod();return;}
+  if(!force&&cached&&Date.now()-cached.at<(isPlaceholder(cached.data)?3600e3:6*3600e3)){apod=cached.data;apodErr="";apodNote="";renderApod();return;}
   apod=null;apodErr="";apodDetail="";apodNote="";renderApod();
   const key=apodKey();
   let res=await apodFetch(key);
@@ -606,6 +652,13 @@ function renderApod(){
     $("apodRetry").addEventListener("click",()=>loadApod(true));return;}
   if(!apod){el.innerHTML=busyHTML();return;}
   const note=apodNote?`<p class="small" style="margin:0;color:var(--warn)">${apodNote==="keyBad"?t("keyBad"):t("apodStale")+" ("+esc(apodDetail)+")"}</p>`:"";
+  if(isPlaceholder(apod)){
+    el.innerHTML=`<div style="display:grid;gap:8px;min-width:0;grid-column:1/-1">
+      <div class="mono small muted">${esc(apod.date)}</div>
+      <p class="small" style="margin:0;color:var(--warn)">${t("apodPh")}</p>
+      <div class="links"><a href="${esc(apodPage(apod.date))}" target="_blank" rel="noopener">${t("apodOpen")}</a></div>
+      ${apod.explanation?`<details><summary>${t("readMore")}</summary>${t("apodEn")?`<p class="muted small">${t("apodEn")}</p>`:""}<p class="small" style="margin:6px 0 0">${esc(apod.explanation)}</p></details>`:""}
+    </div>`;return;}
   const isImg=apod.media_type==="image";
   const img=isImg?apod.url:apod.thumbnail_url;
   const link=isImg?(apod.hdurl||apod.url):apod.url;

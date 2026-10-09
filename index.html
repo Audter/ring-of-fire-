@@ -235,7 +235,7 @@ h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0;text-wrap:
       <summary data-i18n="keySum"></summary>
       <p class="note" style="margin:8px 0" data-i18n="keyNote"></p>
       <form id="keyForm" class="controls">
-        <input type="text" id="apiKey" autocomplete="off" spellcheck="false" placeholder="DEMO_KEY" style="flex:1;min-width:0">
+        <input type="text" id="apiKey" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="DEMO_KEY" style="flex:1;min-width:0">
         <button type="submit" data-i18n="save"></button>
       </form>
       <a href="https://api.nasa.gov/" target="_blank" rel="noopener" data-i18n="getKey"></a>
@@ -293,6 +293,8 @@ th:{auto:"อัตโนมัติ",light:"สว่าง",dark:"มืด",
  tbH:"10 อันดับขนาดใหญ่สุด",thPlace:"ตำแหน่ง",thDepth:"ลึก",thTime:"เวลาไทย",
  apodH:"ภาพดาราศาสตร์ประจำวัน",apodEn:"คำอธิบายจาก NASA เป็นภาษาอังกฤษ",readMore:"อ่านคำอธิบาย",openVideo:"เปิดวิดีโอ",openHd:"เปิดภาพความละเอียดสูง",
  apodLimit:"DEMO_KEY ใช้ครบโควตาแล้ว ใส่ API key ฟรีของคุณด้านล่างเพื่อใช้งานต่อ",apodFail:"โหลดภาพจาก NASA ไม่ได้",
+ apodWhy:"บริการ APOD ของ NASA ล่มบ่อย ลองกดลองใหม่อีกครั้งในภายหลัง หรือเปิดดูภาพของวันนี้ที่เว็บ NASA โดยตรง",retry:"ลองใหม่",
+ keyBad:"API key ที่บันทึกไว้ใช้ไม่ได้ จึงใช้ DEMO_KEY แทน ตรวจสอบ key อีกครั้ง",apodStale:"แสดงภาพล่าสุดที่เคยโหลดไว้ เพราะโหลดภาพใหม่ไม่ได้",
  keySum:"ตั้งค่า NASA API key",keyNote:"แอปใช้ DEMO_KEY เป็นค่าเริ่มต้น ซึ่งจำกัด 30 ครั้งต่อชั่วโมงและ 50 ครั้งต่อวัน สมัคร key ฟรีเพื่อเพิ่มเป็น 1,000 ครั้งต่อชั่วโมง key จะเก็บไว้ในเครื่องนี้เท่านั้น",save:"บันทึก",saved:"บันทึกแล้ว",getKey:"สมัคร key ฟรีที่ api.nasa.gov",
  srcH:"แหล่งข้อมูล",srcNote:"แผ่นดินไหวอัปเดตเองทุก 5 นาทีระหว่างเปิดค้างไว้ ข้อมูลอากาศ คลื่น และธรณีวิทยาโหลดเมื่อเปลี่ยนตำแหน่ง ภาพ NASA โหลดวันละครั้ง ข้อมูล Open-Meteo ใช้ได้ฟรีเฉพาะการใช้งานที่ไม่ใช่เชิงพาณิชย์",
  updated:"อัปเดต ",suffix:" น.",usgsFail:"โหลดข้อมูล USGS ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วกด Refresh",eonetWarn:"EONET ไม่ตอบสนอง แสดงเฉพาะแผ่นดินไหว",
@@ -318,6 +320,8 @@ en:{auto:"Auto",light:"Light",dark:"Dark",
  tbH:"Top 10 by magnitude",thPlace:"Location",thDepth:"Depth",thTime:"Bangkok time",
  apodH:"Astronomy picture of the day",apodEn:"",readMore:"Read the explanation",openVideo:"Open video",openHd:"Open full resolution",
  apodLimit:"DEMO_KEY has hit its limit. Add your free API key below to keep going.",apodFail:"Couldn't load the NASA picture",
+ apodWhy:"NASA's APOD service goes down fairly often. Try again later, or open today's picture on the NASA site.",retry:"Try again",
+ keyBad:"Your saved API key was rejected, so the app used DEMO_KEY instead. Check the key.",apodStale:"Showing the last picture that loaded, because a new one couldn't be fetched",
  keySum:"NASA API key",keyNote:"The app uses DEMO_KEY by default, limited to 30 requests an hour and 50 a day. A free personal key raises this to 1,000 an hour. The key is stored on this device only.",save:"Save",saved:"Saved",getKey:"Get a free key at api.nasa.gov",
  srcH:"Data sources",srcNote:"Earthquakes refresh every 5 minutes while the page is open. Weather, waves and geology load when you change location. The NASA picture loads once a day. Open-Meteo data is free for non-commercial use only.",
  updated:"Updated ",suffix:"",usgsFail:"Couldn't load USGS data. Check your connection and tap Refresh.",eonetWarn:"EONET not responding; showing earthquakes only",
@@ -567,30 +571,47 @@ $("myLoc").addEventListener("click",()=>{
 });
 
 /* ---------- NASA APOD ---------- */
-let apod=null,apodErr="";
+let apod=null,apodErr="",apodDetail="",apodNote="";
 function apodKey(){return store.get("rofw-nasa-key","")||"DEMO_KEY";}
 $("apiKey").value=store.get("rofw-nasa-key","");
-async function loadApod(force){
-  try{const c=JSON.parse(store.get("rofw-apod","null"));if(!force&&c&&Date.now()-c.at<6*3600e3){apod=c.data;renderApod();return;}}catch(e){}
-  apod=null;apodErr="";renderApod();
+async function apodFetch(key){
+  const c=new AbortController(),tm=setTimeout(()=>c.abort(),15000);
   try{
-    const r=await fetch(`https://api.nasa.gov/planetary/apod?thumbs=true&api_key=${encodeURIComponent(apodKey())}`);
-    if(r.status===429){apodErr="apodLimit";renderApod();return;}
-    if(!r.ok)throw new Error(r.status);
-    apod=await r.json();store.set("rofw-apod",JSON.stringify({at:Date.now(),data:apod}));
-  }catch(e){apodErr="apodFail";}
+    const r=await fetch(`https://api.nasa.gov/planetary/apod?thumbs=true&api_key=${encodeURIComponent(key)}`,{signal:c.signal,cache:"no-store"});
+    if(!r.ok)return {status:r.status};
+    const j=await r.json();
+    return j&&j.title?{data:j}:{status:"bad JSON"};
+  }catch(e){return {status:e.name==="AbortError"?"timeout":"network / CORS"};}
+  finally{clearTimeout(tm);}
+}
+async function loadApod(force){
+  let cached=null;try{cached=JSON.parse(store.get("rofw-apod","null"))}catch(e){}
+  if(!force&&cached&&Date.now()-cached.at<6*3600e3){apod=cached.data;apodErr="";apodNote="";renderApod();return;}
+  apod=null;apodErr="";apodDetail="";apodNote="";renderApod();
+  const key=apodKey();
+  let res=await apodFetch(key);
+  if((res.status===403||res.status===401)&&key!=="DEMO_KEY"){res=await apodFetch("DEMO_KEY");if(res.data)apodNote="keyBad";}
+  if(typeof res.status==="number"&&res.status>=500||res.status==="network / CORS"||res.status==="timeout"){
+    await new Promise(r=>setTimeout(r,2500));res=await apodFetch(key);}
+  if(res.data){apod=res.data;store.set("rofw-apod",JSON.stringify({at:Date.now(),data:apod}));}
+  else if(cached&&cached.data){apod=cached.data;apodNote="stale";apodDetail=String(res.status);}
+  else{apodErr=res.status===429?"apodLimit":"apodFail";apodDetail=String(res.status);}
   renderApod();
 }
 function renderApod(){
   const el=$("apodBody");
-  if(apodErr){el.innerHTML=`<p class="muted">${t(apodErr)}</p>`;return;}
+  if(apodErr){el.innerHTML=`<div style="display:grid;gap:8px"><p class="muted" style="margin:0">${t(apodErr)} <span class="mono small">(${esc(apodDetail)})</span></p>
+    <p class="small muted" style="margin:0">${t("apodWhy")}</p>
+    <div class="links"><button type="button" id="apodRetry">${t("retry")}</button><a href="https://apod.nasa.gov/apod/astropix.html" target="_blank" rel="noopener">apod.nasa.gov</a></div></div>`;
+    $("apodRetry").addEventListener("click",()=>loadApod(true));return;}
   if(!apod){el.innerHTML=busyHTML();return;}
+  const note=apodNote?`<p class="small" style="margin:0;color:var(--warn)">${apodNote==="keyBad"?t("keyBad"):t("apodStale")+" ("+esc(apodDetail)+")"}</p>`:"";
   const isImg=apod.media_type==="image";
   const img=isImg?apod.url:apod.thumbnail_url;
   const link=isImg?(apod.hdurl||apod.url):apod.url;
   const safe=u=>/^https?:\/\//.test(u||"")?u:"";
   el.innerHTML=`${safe(img)?`<a class="apod-img" href="${esc(safe(link))}" target="_blank" rel="noopener"><img src="${esc(safe(img))}" alt="${esc(apod.title)}" loading="lazy"></a>`:""}
-    <div style="display:grid;gap:6px;min-width:0">
+    <div style="display:grid;gap:6px;min-width:0">${note}
       <div class="mono small muted">${esc(apod.date)}${apod.copyright?" · © "+esc(apod.copyright.trim()):""}</div>
       <h3 style="margin:0">${esc(apod.title)}</h3>
       ${safe(link)?`<a href="${esc(safe(link))}" target="_blank" rel="noopener">${isImg?t("openHd"):t("openVideo")}</a>`:""}
